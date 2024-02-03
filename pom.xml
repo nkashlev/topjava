@@ -17,6 +17,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <logback.version>1.2.13</logback.version>
         <slf4j.version>1.7.36</slf4j.version>
+        <jstl.version>1.2</jstl.version>
     </properties>
     <build>
         <finalName>topjava</finalName>
@@ -58,6 +59,12 @@
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
             <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>${jstl.version}</version>
         </dependency>
     </dependencies>
 
