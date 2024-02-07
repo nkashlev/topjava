@@ -38,7 +38,7 @@
             <td>
                 <fmt:parseDate value="${ meal.dateTime }" pattern="yyyy-MM-dd'T'HH:mm" var="parsedDateTime"
                                type="both"/>
-                <fmt:formatDate pattern="dd.MM.yyyy HH:mm" value="${ parsedDateTime }"/>
+                <fmt:formatDate pattern="dd-MM-yyyy HH:mm" value="${ parsedDateTime }"/>
             </td>
             <td><c:out value="${meal.description}"/></td>
             <td><c:out value="${meal.calories}"/></td>
