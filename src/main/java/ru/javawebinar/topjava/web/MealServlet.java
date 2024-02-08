@@ -2,6 +2,7 @@ package ru.javawebinar.topjava.web;
 
 import org.slf4j.Logger;
 import ru.javawebinar.topjava.dao.InMemoryMealDao;
+import ru.javawebinar.topjava.dao.MealDao;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
@@ -21,41 +22,45 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class MealServlet extends HttpServlet {
     private static final Logger log = getLogger(MealServlet.class);
 
-    private InMemoryMealDao inMemoryMealDao;
+    private MealDao mealDao;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        inMemoryMealDao = new InMemoryMealDao();
+        mealDao = new InMemoryMealDao();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
 
-        if (action == null) {
-            log.debug("Get all");
-            Collection<MealTo> mealToList = MealsUtil.filteredByStreams(
-                    inMemoryMealDao.getAll(),
-                    LocalTime.MIN, LocalTime.MAX,
-                    2000);
-            request.setAttribute("mealToList", mealToList);
-            request.getRequestDispatcher("meals.jsp").forward(request, response);
-        } else if (action.equals("delete")) {
-            int mealId = getId(request);
-            log.debug("Delete meal with id {}", mealId);
-            inMemoryMealDao.delete(mealId);
-            response.sendRedirect(request.getContextPath() + "/meals");
-        } else if (action.equals("create")) {
-            Meal meal = new Meal(LocalDateTime.now(), "some description", 500);
-            request.setAttribute("meal", meal);
-            request.getRequestDispatcher("edit.jsp").forward(request, response);
-        } else if (action.equals("update")) {
-            Meal meal = inMemoryMealDao.get(getId(request));
-            request.setAttribute("meal", meal);
-            request.getRequestDispatcher("edit.jsp").forward(request, response);
-        } else {
-            response.sendRedirect(request.getContextPath() + "/meals");
+        switch (action == null ? "all" : action) {
+            case "all":
+                log.debug("Get all");
+                Collection<MealTo> mealToList = MealsUtil.filteredByStreams(
+                        mealDao.getAll(),
+                        LocalTime.MIN, LocalTime.MAX,
+                        2000);
+                request.setAttribute("mealToList", mealToList);
+                request.getRequestDispatcher("meals.jsp").forward(request, response);
+                break;
+            case "delete":
+                int mealId = getId(request);
+                log.debug("Delete meal with id {}", mealId);
+                mealDao.delete(mealId);
+                response.sendRedirect(request.getContextPath() + "/meals");
+                break;
+            case "create":
+                Meal meal = new Meal(LocalDateTime.now(), "some description", 500);
+                request.setAttribute("meal", meal);
+                request.getRequestDispatcher("editMeal.jsp").forward(request, response);
+                break;
+            case "update":
+                request.setAttribute("meal", mealDao.get(getId(request)));
+                request.getRequestDispatcher("editMeal.jsp").forward(request, response);
+                break;
+            default:
+                response.sendRedirect(request.getContextPath() + "/meals");
         }
     }
 
@@ -64,7 +69,7 @@ public class MealServlet extends HttpServlet {
         if (mealId != null) {
             return Integer.parseInt(mealId);
         } else {
-             throw new IllegalArgumentException("Non-existent id");
+            throw new IllegalArgumentException("Non-existent id");
         }
     }
 
@@ -80,7 +85,7 @@ public class MealServlet extends HttpServlet {
                 dateTime,
                 description,
                 calories);
-        inMemoryMealDao.save(meal);
+        mealDao.save(meal);
         log.debug("Meal save");
         response.sendRedirect(request.getContextPath() + "/meals");
     }

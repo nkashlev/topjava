@@ -6,11 +6,8 @@
 <head>
     <title>Meals</title>
     <h3><a href="index.html">Home</a></h3>
-    <c:set var="title" value="Edit Meal"/>
-    <c:if test="${param.action eq 'create'}">
-        <c:set var="title" value="Add Meal"/>
-    </c:if>
-    <h2><c:out value="${title}"/></h2>
+    <c:set var="title" value="${param.action eq 'create' ? 'Add Meal' : 'Edit Meal'}" />
+    <h2>${title}</h2>
 </head>
 <body>
 <jsp:useBean id="meal" scope="request" type="ru.javawebinar.topjava.model.Meal"/>
