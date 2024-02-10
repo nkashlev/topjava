@@ -4,6 +4,7 @@ import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.User;
 
 import java.util.List;
+
 @Controller
 public class AdminRestController extends AbstractUserController {
 
