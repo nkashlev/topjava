@@ -22,6 +22,8 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class MealServlet extends HttpServlet {
     private static final Logger log = getLogger(MealServlet.class);
 
+    private static final int CALORIES_PER_DAY = 2000;
+
     private MealDao mealDao;
 
     @Override
@@ -40,7 +42,7 @@ public class MealServlet extends HttpServlet {
                 Collection<MealTo> mealToList = MealsUtil.filteredByStreams(
                         mealDao.getAll(),
                         LocalTime.MIN, LocalTime.MAX,
-                        2000);
+                        CALORIES_PER_DAY);
                 request.setAttribute("mealToList", mealToList);
                 request.getRequestDispatcher("meals.jsp").forward(request, response);
                 break;
@@ -77,14 +79,9 @@ public class MealServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
         String mealId = request.getParameter("id");
-        String dateTimeString = request.getParameter("dateTime");
-        String description = request.getParameter("description");
-        int calories = Integer.parseInt(request.getParameter("calories"));
-        LocalDateTime dateTime = LocalDateTime.parse(dateTimeString);
         Meal meal = new Meal(mealId.isEmpty() ? null : Integer.parseInt(mealId),
-                dateTime,
-                description,
-                calories);
+                LocalDateTime.parse(request.getParameter("dateTime")), request.getParameter("description"),
+                Integer.parseInt(request.getParameter("calories")));
         mealDao.save(meal);
         log.debug("Meal save");
         response.sendRedirect(request.getContextPath() + "/meals");

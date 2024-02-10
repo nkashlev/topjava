@@ -15,7 +15,7 @@ public class InMemoryMealDao implements MealDao {
     private final Map<Integer, Meal> mealsMap = new ConcurrentHashMap<>();
 
     {
-        MealsUtil.MEAL_LIST.forEach(this::save);
+        MealsUtil.meals.forEach(this::save);
     }
 
     @Override
