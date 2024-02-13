@@ -10,6 +10,8 @@ import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.util.ValidationUtil;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 
@@ -44,14 +46,22 @@ public class MealRestController {
     public void create(Meal meal) {
         int userId = SecurityUtil.authUserId();
         ValidationUtil.checkNew(meal);
-        log.info("create meal {} for user with id {}", meal, userId);
+        log.info("create {} for user with id {}", meal, userId);
         service.create(meal, userId);
     }
 
-    public void create(Meal meal, int id) {
+    public void update(Meal meal, int id) {
         int userId = SecurityUtil.authUserId();
         ValidationUtil.assureIdConsistent(meal, id);
-        log.info("update meal {} for user with id {}", meal, userId);
+        log.info("update {} for user with id {}", meal, userId);
         service.update(meal, userId);
+    }
+
+    public List<MealTo> getBetween(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
+        int userId = SecurityUtil.authUserId();
+        log.info("getBetween dates({} - {}) time({} - {}) for user with id {}", startDate, endDate, startTime, endTime, userId);
+
+        List<Meal> mealsDateFiltered = service.getBetweenInclusive(startDate, endDate, userId);
+        return MealsUtil.getFilteredTos(mealsDateFiltered, SecurityUtil.authUserCaloriesPerDay(), startTime, endTime);
     }
 }

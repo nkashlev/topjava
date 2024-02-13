@@ -23,7 +23,7 @@ public class SpringMain {
 
             MealRestController mealRestController = appCtx.getBean(MealRestController.class);
             mealRestController.create(new Meal(LocalDateTime.of(2000, Month.OCTOBER, 21, 10, 0),
-                    "some description", 500 ), 1);
+                    "some description", 500 ));
         }
     }
 }
